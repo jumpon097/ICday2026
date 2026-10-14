@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="IC Day UBCH">
-  <title>IC Day 2026 | UBCH</title>
+  <title>IC Day 2026 | UBCH (v3.1)</title>
   <link rel="icon" href="assets/icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
@@ -43,6 +43,7 @@
     .helper button{flex:none}
     .loadhint{position:absolute;inset:0;background:#fffafc;display:flex;align-items:center;justify-content:center;color:#886279;font-size:14px;pointer-events:none}
     .loadhint span{padding:16px 25px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+    .trouble{position:absolute;z-index:8;left:50%;top:14px;transform:translateX(-50%);width:min(calc(100% - 24px),660px);background:#fffefa;border:1px solid #f3d5b3;padding:13px 15px;border-radius:12px;box-shadow:0 10px 25px #8b1d5d20;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px;color:#695163}.trouble[hidden]{display:none!important}.trouble strong{color:#7c2557}.trouble a{font-weight:700;color:#8b1d5d}
     @media(max-width:760px){.top{min-height:64px;gap:7px;padding:8px 10px}.logo{height:39px;width:39px}.lotus{display:none}.brand strong{font-size:15px}.brand small{font-size:10px}.status{display:none}.external{padding:7px 9px;font-size:12px}.actions{gap:5px}.install{padding:7px 9px}.webapp{height:calc(100dvh - 64px);min-height:500px}}
     @media(max-width:380px){.brand small{display:none}.brand strong{font-size:14px}.logo{height:36px;width:36px}.external{font-size:11px}.actions{gap:3px}}
     @media print{.top,.helper,.offline-note{display:none!important}.webapp{height:100vh}}
@@ -59,7 +60,7 @@
       <span id="netStatus" class="status" role="status">ออนไลน์</span>
       <button id="installBtn" class="install" type="button" hidden>＋ ติดตั้งแอป</button>
       <button id="reloadBtn" type="button" title="โหลดระบบบันทึกคะแนนใหม่">↻ รีเฟรช</button>
-      <a id="directLink" class="external" href="https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec" target="_blank" rel="noopener noreferrer">↗ เปิดตรง</a>
+      <a id="directLink" class="external" href="https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec" target="_blank" rel="noopener noreferrer">↗ เปิดระบบโดยตรง</a>
     </div>
   </header>
   <main class="main" aria-label="ระบบบันทึกคะแนน IC Day">
@@ -67,11 +68,16 @@
     <!-- GAS hosts the scoring UI inside its own trusted origin so google.script.run works.
          No passwords, scores, judge PINs or admin PINs are transmitted to GitHub Pages. -->
     <iframe id="scoreFrame" class="webapp"
-      src="https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec"
+      src="https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec"
       title="ระบบบันทึกคะแนนและสรุปผล IC Day UBCH"
       referrerpolicy="strict-origin-when-cross-origin"
       allow="fullscreen"
       loading="eager"></iframe>
+    <div id="slowHelp" class="trouble" hidden role="status">
+      <span><strong>เปิดระบบแล้วกดไม่ได้?</strong> หากแอปภายในไม่ตอบสนอง อาจติดข้อจำกัดการล็อกอินข้ามเว็บไซต์ โปรดเปิด GAS โดยตรง</span>
+      <a id="slowOpen" class="external" href="https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec" target="_blank" rel="noopener noreferrer">↗ เปิดตรง</a>
+      <button id="slowClose" type="button" aria-label="ปิดข้อความ">✕</button>
+    </div>
     <div id="offlineNote" class="offline-note" hidden>
       <div><div style="font-size:40px" aria-hidden="true">📴</div><h2>ไม่ได้เชื่อมต่ออินเทอร์เน็ต</h2><p>สามารถเปิดหน้า PWA ได้ แต่การดูคะแนนสดและการบันทึกคะแนนจำเป็นต้องเชื่อมต่อ Google Apps Script และ Google Sheets<br><b>ระบบไม่เก็บคะแนนเพื่อรอส่งเมื่อออฟไลน์</b></p><button id="retryBtn" type="button">ลองเชื่อมต่ออีกครั้ง</button></div>
     </div>
@@ -85,8 +91,10 @@
       'use strict';
       const $=id=>document.getElementById(id);
       const frame=$('scoreFrame');
-      const GAS_URL='https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec';
-      let installPrompt=null;
+      const GAS_URL='https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec';
+      let installPrompt=null, helpDismissed=false;
+      const slowTimer=setTimeout(()=>{if(!helpDismissed && navigator.onLine) $('slowHelp').hidden=false;},18000);
+      $('slowClose').addEventListener('click',()=>{helpDismissed=true;$('slowHelp').hidden=true;});
       const updateNetwork=()=>{
         const online=navigator.onLine;
         $('netStatus').textContent=online?'ออนไลน์':'ออฟไลน์';
@@ -97,6 +105,7 @@
         updateNetwork();
         if(!navigator.onLine)return;
         $('loadHint').hidden=false;
+        $('slowHelp').hidden=true;
         // Reloading the remote iframe does NOT clear scoring sheets or settings.
         frame.src=GAS_URL+'?pwa_reload='+Date.now();
       }

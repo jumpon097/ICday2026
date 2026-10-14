@@ -1,5 +1,5 @@
 /* IC Day UBCH PWA: cache only public static shell, NEVER cache or intercept scores / GAS / Drive. */
-const CACHE='ic-day-ubch-shell-v3';
+const CACHE='ic-day-ubch-shell-v3.1';
 const STATIC=['./index.html','./manifest.webmanifest','./assets/icon-192.png','./assets/icon-512.png','./assets/icon-maskable-512.png','./assets/ubch-logo.webp','./assets/nong-dokbua.webp'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(STATIC)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ic-day-ubch-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
