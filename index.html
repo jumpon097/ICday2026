@@ -60,7 +60,7 @@
       <span id="netStatus" class="status" role="status">ออนไลน์</span>
       <button id="installBtn" class="install" type="button" hidden>＋ ติดตั้งแอป</button>
       <button id="reloadBtn" type="button" title="โหลดระบบบันทึกคะแนนใหม่">↻ รีเฟรช</button>
-      <a id="directLink" class="external" href="https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec" target="_blank" rel="noopener noreferrer">↗ เปิดระบบโดยตรง</a>
+      <a id="directLink" class="external" href="https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec" target="_blank" rel="noopener noreferrer">↗ เปิดระบบโดยตรง</a>
     </div>
   </header>
   <main class="main" aria-label="ระบบบันทึกคะแนน IC Day">
@@ -68,14 +68,14 @@
     <!-- GAS hosts the scoring UI inside its own trusted origin so google.script.run works.
          No passwords, scores, judge PINs or admin PINs are transmitted to GitHub Pages. -->
     <iframe id="scoreFrame" class="webapp"
-      src="https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec"
+      src="https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec"
       title="ระบบบันทึกคะแนนและสรุปผล IC Day UBCH"
       referrerpolicy="strict-origin-when-cross-origin"
       allow="fullscreen"
       loading="eager"></iframe>
     <div id="slowHelp" class="trouble" hidden role="status">
       <span><strong>เปิดระบบแล้วกดไม่ได้?</strong> หากแอปภายในไม่ตอบสนอง อาจติดข้อจำกัดการล็อกอินข้ามเว็บไซต์ โปรดเปิด GAS โดยตรง</span>
-      <a id="slowOpen" class="external" href="https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec" target="_blank" rel="noopener noreferrer">↗ เปิดตรง</a>
+      <a id="slowOpen" class="external" href="https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec" target="_blank" rel="noopener noreferrer">↗ เปิดตรง</a>
       <button id="slowClose" type="button" aria-label="ปิดข้อความ">✕</button>
     </div>
     <div id="offlineNote" class="offline-note" hidden>
@@ -91,7 +91,7 @@
       'use strict';
       const $=id=>document.getElementById(id);
       const frame=$('scoreFrame');
-      const GAS_URL='https://script.google.com/macros/s/AKfycbx9T9PsNoVFibhcMiPOix0NKfoYZURF_XzJHvZmtl1_KrA3wiK1MtGu4wJyjAPfRwqN/exec';
+      const GAS_URL='https://script.google.com/macros/s/AKfycbyyVDp3fC1Si_ewJ6h6QJxwqhylqGeftVcc20KFjbjzaaa9Nx7GwVI1mrCILxu6U26w/exec';
       let installPrompt=null, helpDismissed=false;
       const slowTimer=setTimeout(()=>{if(!helpDismissed && navigator.onLine) $('slowHelp').hidden=false;},18000);
       $('slowClose').addEventListener('click',()=>{helpDismissed=true;$('slowHelp').hidden=true;});
